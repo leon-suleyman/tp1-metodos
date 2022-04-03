@@ -1,4 +1,5 @@
 #include "./main.h"
+#include <math.h>
 
 
 //Variables
@@ -87,4 +88,64 @@ void handleError(int error){
     else if (error == 502) { 
         clog << "Error al abrir el archivo de entrada" << endl;
     }
+}
+
+float multiplicanteA(float diffEntreRadios, int j){ //crea el multiplicante para t_j-1,k
+    return 1/(pow(diffEntreRadios, 2)) - 1/(pow(diffEntreRadios, 2))/j ;
+}
+
+float multiplicanteB(float diffEntreAngulos, float diffEntreRadios, int j){ //crea el multiplicante para t_j,k
+    return 1/j/pow(diffEntreRadios,2) - 2/j/(pow(diffEntreRadios,2))/pow(diffEntreAngulos,2) ;
+}
+
+float multiplicanteC(float diffEntreRadios){ //crea el multiplicante para t_j+1,k
+    return 1/pow(diffEntreRadios,2) ;
+}
+
+float multiplicanteD(float diffEntreAngulos, float diffEntreRadios, int j){ //crea el multiplicante para t_j,k-1 y t_j,k+1
+    return 1/j/(pow(diffEntreRadios,2))/pow(diffEntreAngulos,2);
+}
+
+vector< vector< float > > crearMatrizA (int cantAngulos, int cantRadios, float comienzoPared, float finalPared){
+    float diffEntreAngulos = 2*M_PI/cantAngulos;
+    float diffEntreRadios = (comienzoPared - finalPared)/cantRadios;
+
+    int tam_matriz = cantAngulos*(cantRadios+1) ;
+    vector< vector< float >> matrizA( tam_matriz, vector<float>(tam_matriz)) ;
+
+    float mult_c = multiplicanteC(diffEntreRadios); //pre calculamos "c" ya que no necesita j
+    for(int k = 0; k<cantAngulos; k++){
+        for(int j = 0; j<=cantRadios; j++ ){
+            //asignamos "b" a t_j,k
+            matrizA[k*cantRadios + j][k*cantRadios + j] = multiplicanteB(diffEntreAngulos, diffEntreRadios, j) ;
+            
+            //asignamos "a" a t_j-1,k
+            if(j != 0){
+                matrizA[k*cantRadios + j][k*cantRadios + j-1] = multiplicanteA(diffEntreRadios, j) ;
+            }
+            
+            //asignamos "c" a t_j+1,k
+            if(j != cantRadios){
+                matrizA[k*cantRadios + j][k*cantRadios + j+1] = mult_c ;
+            }
+
+            //asignamos "d" a t_j,k-1
+            if(k != 0){ //si no es el angulo 0, k-1 es directo k-1
+                matrizA[k*cantRadios + j][(k-1)*cantRadios + j] = multiplicanteD(diffEntreAngulos, diffEntreRadios, j) ;
+            }else{ //si es 0, hay que usar el angulo 2*PI para k-1
+                matrizA[k*cantRadios + j][(cantAngulos-1)*cantRadios + j] = multiplicanteD(diffEntreAngulos, diffEntreRadios, j) ;
+            }
+
+            //asignamos "d" a t_j,k+1
+            if(k != cantAngulos-1){ //si no es n-1, usamos k+1
+                matrizA[k*cantRadios + j][(k+1)*cantRadios + j] = multiplicanteD(diffEntreAngulos, diffEntreRadios, j) ;
+            }else{ //si es n-1, usamos el angulo 0
+                matrizA[k*cantRadios + j][0 + j] = multiplicanteD(diffEntreAngulos, diffEntreRadios, j) ;
+            }
+
+        }
+    }
+
+    return matrizA;
+
 }

@@ -68,4 +68,4 @@ float getNextFloatFromInputFile(ifstream & inputFile){
 
 
 void handleError(int);
-
+vector< vector< int > > crearMatrizA (int cantAngulos, int cantRadios, int comienzoPared, int finalPared);
