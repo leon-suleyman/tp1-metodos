@@ -4,10 +4,13 @@
 //Variables
 int internalRadius;
 int externalRadius;
-int m;
-int n;
+int m; //particiones del radio
+int n; //particiones angulares
 int isoterma;
 int numeroDeInstancias;
+
+vector<float> internalTemperatures;
+vector<float> externalTemperatures;
 
 int main(int argc, char* argv[]){
 
@@ -23,21 +26,36 @@ int main(int argc, char* argv[]){
         if (method > 1 || method < 0)
             throw 501;
 
+
         ifstream inputFile;
         inputFile.open(inputFileName);
         if(inputFile.is_open()){
 
-            internalRadius = getNextValueFromInputFile(inputFile);
+            cout << "Cargando archivo " << inputFileName << endl;
+            
+            internalRadius = getNextIntFromInputFile(inputFile);
 
-            externalRadius = getNextValueFromInputFile(inputFile);
+            externalRadius = getNextIntFromInputFile(inputFile);
 
-            m = getNextValueFromInputFile(inputFile);
+            m = getNextIntFromInputFile(inputFile);
 
-            n = getNextValueFromInputFile(inputFile);
+            n = getNextIntFromInputFile(inputFile);
 
-            isoterma = getNextValueFromInputFile(inputFile);
+            isoterma = getNextIntFromInputFile(inputFile);
 
-            numeroDeInstancias = getNextValueFromInputFile(inputFile);
+            numeroDeInstancias = getNextIntFromInputFile(inputFile);
+
+            for (int i = 0; i < n; i++)
+            {
+                internalTemperatures.push_back(getNextFloatFromInputFile(inputFile));
+            }
+            
+            for (int i = 0; i < n; i++)
+            {
+                externalTemperatures.push_back(getNextFloatFromInputFile(inputFile));
+            }
+
+            cout << "OK" << endl;
 
         }else { 
             throw 502;
