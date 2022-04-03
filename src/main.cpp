@@ -45,15 +45,21 @@ int main(int argc, char* argv[]){
 
             numeroDeInstancias = getNextIntFromInputFile(inputFile);
 
-            for (int i = 0; i < n; i++)
+            for (int j = 0; j < numeroDeInstancias; j++)
             {
-                internalTemperatures.push_back(getNextFloatFromInputFile(inputFile));
+
+                for (int i = 0; i < n; i++)
+                {
+                    internalTemperatures.push_back(getNextFloatFromInputFile(inputFile));
+                }
+                
+                for (int i = 0; i < n; i++)
+                {
+                    externalTemperatures.push_back(getNextFloatFromInputFile(inputFile));
+                }
+                
             }
             
-            for (int i = 0; i < n; i++)
-            {
-                externalTemperatures.push_back(getNextFloatFromInputFile(inputFile));
-            }
 
             cout << "OK" << endl;
 
