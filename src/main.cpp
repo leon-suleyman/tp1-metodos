@@ -61,6 +61,9 @@ int main(int argc, char* argv[]){
                 
             }
             
+            vector< vector< float >> matrizA = crearMatrizA((int)n, (int)m , (float)internalRadius, (float)externalRadius) ;
+            vector< vector< float >> stripB(1, vector<float>(n*(m+1))) ;
+
 
             cout << "OK" << endl;
 
