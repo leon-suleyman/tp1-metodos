@@ -34,17 +34,17 @@ int main(int argc, char* argv[]){
 
             cout << "Cargando archivo " << inputFileName << endl;
             
-            internalRadius = getNextIntFromInputFile(inputFile);
+            int internalRadius = getNextIntFromInputFile(inputFile);
 
-            externalRadius = getNextIntFromInputFile(inputFile);
+            int externalRadius = getNextIntFromInputFile(inputFile);
 
-            m = getNextIntFromInputFile(inputFile);
+            int m = getNextIntFromInputFile(inputFile);
 
-            n = getNextIntFromInputFile(inputFile);
+            int n = getNextIntFromInputFile(inputFile);
 
-            isoterma = getNextIntFromInputFile(inputFile);
+            int isoterma = getNextIntFromInputFile(inputFile);
 
-            numeroDeInstancias = getNextIntFromInputFile(inputFile);
+            int numeroDeInstancias = getNextIntFromInputFile(inputFile);
 
             for (int j = 0; j < numeroDeInstancias; j++)
             {
@@ -61,8 +61,8 @@ int main(int argc, char* argv[]){
                 
             }
             
-            // vector< vector< float >> matrizA = crearMatrizA((int)n, (int)m , (float)internalRadius, (float)externalRadius) ;
-            // vector< vector< float >> stripB(1, vector<float>(n*(m+1))) ;
+             vector< vector< float >> matrizA = crearMatrizA(n, m , internalRadius, externalRadius) ;
+             vector< vector< float >> stripB(1, vector<float>(n*(m+1))) ;
 
 
             cout << "OK" << endl;
@@ -109,16 +109,17 @@ float multiplicanteD(float diffEntreAngulos, float diffEntreRadios, int j){ //cr
     return 1/j/(pow(diffEntreRadios,2))/pow(diffEntreAngulos,2);
 }
 
-vector< vector< float > > crearMatrizA (int cantAngulos, int cantRadios, float comienzoPared, float finalPared){
+vector< vector< float > > crearMatrizA (int cantAngulos, int cantRadios, int comienzoPared, int finalPared){
     float diffEntreAngulos = 2*M_PI/cantAngulos;
     float diffEntreRadios = (comienzoPared - finalPared)/cantRadios;
 
-    int tam_matriz = cantAngulos*(cantRadios+1) ;
+    int tam_matriz = cantAngulos*cantRadios ;
     vector< vector< float >> matrizA( tam_matriz, vector<float>(tam_matriz)) ;
 
     float mult_c = multiplicanteC(diffEntreRadios); //pre calculamos "c" ya que no necesita j
     for(int k = 0; k<cantAngulos; k++){
-        for(int j = 0; j<=cantRadios; j++ ){
+        for(int j = 0; j<cantRadios; j++ ){
+
             //asignamos "b" a t_j,k
             matrizA[k*cantRadios + j][k*cantRadios + j] = multiplicanteB(diffEntreAngulos, diffEntreRadios, j) ;
             
