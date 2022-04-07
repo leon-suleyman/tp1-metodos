@@ -73,25 +73,18 @@ int main(int argc, char *argv[])
 		vector<vector<float>> matrizA = crearMatrizA(n, m, internalRadius, externalRadius);
 		vector<vector<float>> stripB(1, vector<float>(n * m));
 
+
+		printMatriz(matrizA);
+
 		if (method == 0)
 		{ // EG
-
-			for (int i = 0; i < n * m - 1; i++) // para cada columna
-			{
-
-				for (int j = i + 1; j < n * m; j++) // para cada valor por debajo de la diagonal
-				{
-					float m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
-
-					for (int k = i; k < n * m + 1; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
-					{
-						matrizA[j][k] = matrizA[j][k] - m_ji * matrizA[i][k];
-					}
-				}
-			}
+			eliminacionGaussiana(matrizA);
 		}
 
 		printMatriz(matrizA);
+
+		
+
 	}
 	catch (int e)
 	{
@@ -201,4 +194,20 @@ vector<vector<float>> crearMatrizA(int cantAngulos, int cantRadios, int comienzo
 	}
 
 	return matrizA;
+}
+
+void eliminacionGaussiana (vector<vector<float>>& matrizA){
+	for (int i = 0; i < n * m - 1; i++) // para cada columna
+			{
+
+				for (int j = i + 1; j < n * m; j++) // para cada valor por debajo de la diagonal
+				{
+					float m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
+
+					for (int k = i; k < n * m + 1; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
+					{
+						matrizA[j][k] = matrizA[j][k] - m_ji * matrizA[i][k];
+					}
+				}
+			}
 }

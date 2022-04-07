@@ -96,4 +96,7 @@ float coeficienteB(float diffEntreAngulos, float diffEntreRadios, int j, int rad
 float coeficienteC(float diffEntreRadios);
 float coeficienteD(float diffEntreAngulos, float diffEntreRadios, int j, int radioInterno);
 
+
 vector< vector< float > > crearMatrizA (int cantAngulos, int cantRadios, int comienzoPared, int finalPared);
+
+void eliminacionGaussiana (vector<vector<float>>& matrizA);
