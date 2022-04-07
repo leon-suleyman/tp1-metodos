@@ -118,18 +118,18 @@ void handleError(int error)
 	}
 }
 
-float coeficienteA(float diffEntreRadios, int j)
+float coeficienteA(float diffEntreRadios, int j, int radioInterno)
 { // crea el coeficiente para t_j-1,k
 
-	float radius_j = j * diffEntreRadios + internalRadius;
+	float radius_j = j * diffEntreRadios + radioInterno;
 
 	return 1 / (pow(diffEntreRadios, 2)) - 1 / (radius_j * diffEntreRadios);
 }
 
-float coeficienteB(float diffEntreAngulos, float diffEntreRadios, int j)
+float coeficienteB(float diffEntreAngulos, float diffEntreRadios, int j, int radioInterno)
 { // crea el coeficiente para t_j,k
 
-    float radius_j = j*diffEntreRadios + internalRadius;
+    float radius_j = j*diffEntreRadios + radioInterno;
 
     return 1 / (radius_j * diffEntreRadios) - 2 / pow(diffEntreRadios, 2) - 2 / ((pow(radius_j, 2)) * pow(diffEntreAngulos, 2));
 
@@ -141,10 +141,10 @@ float coeficienteC(float diffEntreRadios)
 	return 1 / pow(diffEntreRadios, 2);
 }
 
-float coeficienteD(float diffEntreAngulos, float diffEntreRadios, int j)
+float coeficienteD(float diffEntreAngulos, float diffEntreRadios, int j, int radioInterno)
 { // crea el coeficiente para t_j,k-1 y t_j,k+1
 
-	float radius_j = j * diffEntreRadios + internalRadius;
+	float radius_j = j * diffEntreRadios + radioInterno;
 
 	return 1 / (pow(diffEntreAngulos, 2) * pow(radius_j, 2));
 }
@@ -152,7 +152,7 @@ float coeficienteD(float diffEntreAngulos, float diffEntreRadios, int j)
 vector<vector<float>> crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared)
 {
 	float diffEntreAngulos = 2 * M_PI / cantAngulos;
-	float diffEntreRadios = (comienzoPared - finalPared) / cantRadios;
+	float diffEntreRadios = (finalPared - comienzoPared) / cantRadios;
 
 	int tam_matriz = cantAngulos * cantRadios;
 	vector<vector<float>> matrizA(tam_matriz, vector<float>(tam_matriz));
@@ -164,12 +164,12 @@ vector<vector<float>> crearMatrizA(int cantAngulos, int cantRadios, int comienzo
 		{
 
 			// asignamos "b" a t_j,k
-			matrizA[k * cantRadios + j][k * cantRadios + j] = coeficienteB(diffEntreAngulos, diffEntreRadios, j);
+			matrizA[k * cantRadios + j][k * cantRadios + j] = coeficienteB(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
 
 			// asignamos "a" a t_j-1,k
 			if (j != 0)
 			{
-				matrizA[k * cantRadios + j][k * cantRadios + j - 1] = coeficienteA(diffEntreRadios, j);
+				matrizA[k * cantRadios + j][k * cantRadios + j - 1] = coeficienteA(diffEntreRadios, j, comienzoPared);
 			}
 
 			// asignamos "c" a t_j+1,k
@@ -181,21 +181,21 @@ vector<vector<float>> crearMatrizA(int cantAngulos, int cantRadios, int comienzo
 			// asignamos "d" a t_j,k-1
 			if (k != 0)
 			{ // si no es el angulo 0, k-1 es directo k-1
-				matrizA[k * cantRadios + j][(k - 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j);
+				matrizA[k * cantRadios + j][(k - 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
 			}
 			else
 			{ // si es 0, hay que usar el angulo 2*PI para k-1
-				matrizA[k * cantRadios + j][(cantAngulos - 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j);
+				matrizA[k * cantRadios + j][(cantAngulos - 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
 			}
 
 			// asignamos "d" a t_j,k+1
 			if (k != cantAngulos - 1)
 			{ // si no es n-1, usamos k+1
-				matrizA[k * cantRadios + j][(k + 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j);
+				matrizA[k * cantRadios + j][(k + 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
 			}
 			else
 			{ // si es n-1, usamos el angulo 0
-				matrizA[k * cantRadios + j][0 + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j);
+				matrizA[k * cantRadios + j][0 + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
 			}
 		}
 	}

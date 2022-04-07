@@ -90,4 +90,10 @@ void printMatriz(vector<vector<float>> matriz)
 }
 
 void handleError(int);
+
+float coeficienteA(float diffEntreRadios, int j, int radioInterno);
+float coeficienteB(float diffEntreAngulos, float diffEntreRadios, int j, int radioInterno);
+float coeficienteC(float diffEntreRadios);
+float coeficienteD(float diffEntreAngulos, float diffEntreRadios, int j, int radioInterno);
+
 vector< vector< float > > crearMatrizA (int cantAngulos, int cantRadios, int comienzoPared, int finalPared);
