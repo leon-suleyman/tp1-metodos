@@ -135,7 +135,7 @@ float coeficienteB(float diffEntreAngulos, float diffEntreRadios, int j){ //crea
 
     float radius_j = j*diffEntreRadios + internalRadius;
 
-    return 1/(radius_j*diffEntreRadios) - 1/pow(diffEntreRadios,2) - 2/((pow(radius_j,2))*pow(diffEntreAngulos,2));
+    return 1/(radius_j*diffEntreRadios) - 2/pow(diffEntreRadios,2) - 2/((pow(radius_j,2))*pow(diffEntreAngulos,2));
 
 }
 
