@@ -66,6 +66,28 @@ float getNextFloatFromInputFile(ifstream & inputFile){
 
 }
 
+void printMatriz(vector<vector<float>> matriz)
+{
+    int cantFilas = matriz.size();
+    int cantColumnas = matriz[0].size();
+    
+
+    for (int i = 0; i < cantFilas; i++)
+    {
+        clog << "(";
+        for (int j = 0; j < cantColumnas; j++)
+        {
+            clog << matriz[i][j];
+
+            if(j != cantColumnas -1){
+                clog << ", ";
+            } 
+        }
+        clog << ")" << endl;
+    }
+    
+    clog << endl;
+}
 
 void handleError(int);
 vector< vector< float > > crearMatrizA (int cantAngulos, int cantRadios, int comienzoPared, int finalPared);
