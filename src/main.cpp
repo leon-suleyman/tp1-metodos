@@ -83,7 +83,9 @@ int main(int argc, char *argv[])
 
 		printMatriz(matrizA);
 
-		
+		//idea de resolver el sistema de ecuación: 
+		//tratar a la matriz como el sistema de ecuacion, donde cada valor es el coeficiente de la variable que da su columna
+		//ir de abajo pa arriba en la matriz y cambiar el valor de la columna hacia arriba con el valor encontrado, ahí el valor de esa casilla pasa de ser el coeficiente a ser el valor mismo
 
 	}
 	catch (int e)
