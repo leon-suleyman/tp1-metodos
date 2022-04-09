@@ -9,8 +9,8 @@ int n; // particiones angulares
 int isoterma;
 int numeroDeInstancias;
 
-vector<vector<float>> internalTemperatures;
-vector<vector<float>> externalTemperatures;
+vector<vector<double>> internalTemperatures;
+vector<vector<double>> externalTemperatures;
 
 int main(int argc, char *argv[])
 {
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 
 			numeroDeInstancias = getNextIntFromInputFile(inputFile);
 
-			vector<float> temps(n);
+			vector<double> temps(n);
 			for (int j = 0; j < numeroDeInstancias; j++)
 			{
 				for (int i = 0; i < n; i++)
@@ -70,9 +70,8 @@ int main(int argc, char *argv[])
 			throw 502;
 		}
 
-		vector<vector<float>> matrizA = crearMatrizA(n, m, internalRadius, externalRadius);
-		vector<vector<float>> stripB(1, vector<float>(n * m));
-
+		vector<vector<double>> matrizA = crearMatrizA(n, m, internalRadius, externalRadius);
+		vector<vector<double>> stripB(1, vector<double>(n * m));
 
 		printMatriz(matrizA);
 
@@ -83,10 +82,9 @@ int main(int argc, char *argv[])
 
 		printMatriz(matrizA);
 
-		//idea de resolver el sistema de ecuación: 
-		//tratar a la matriz como el sistema de ecuacion, donde cada valor es el coeficiente de la variable que da su columna
-		//ir de abajo pa arriba en la matriz y cambiar el valor de la columna hacia arriba con el valor encontrado, ahí el valor de esa casilla pasa de ser el coeficiente a ser el valor mismo
-
+		// idea de resolver el sistema de ecuación:
+		// tratar a la matriz como el sistema de ecuacion, donde cada valor es el coeficiente de la variable que da su columna
+		// ir de abajo pa arriba en la matriz y cambiar el valor de la columna hacia arriba con el valor encontrado, ahí el valor de esa casilla pasa de ser el coeficiente a ser el valor mismo
 	}
 	catch (int e)
 	{
@@ -113,46 +111,45 @@ void handleError(int error)
 	}
 }
 
-float coeficienteA(float diffEntreRadios, int j, int radioInterno)
+double coeficienteA(double diffEntreRadios, int j, int radioInterno)
 { // crea el coeficiente para t_j-1,k
 
-	float radius_j = j * diffEntreRadios + radioInterno;
+	double radius_j = j * diffEntreRadios + radioInterno;
 
 	return 1 / (pow(diffEntreRadios, 2)) - 1 / (radius_j * diffEntreRadios);
 }
 
-float coeficienteB(float diffEntreAngulos, float diffEntreRadios, int j, int radioInterno)
+double coeficienteB(double diffEntreAngulos, double diffEntreRadios, int j, int radioInterno)
 { // crea el coeficiente para t_j,k
 
-    float radius_j = j*diffEntreRadios + radioInterno;
+	double radius_j = j * diffEntreRadios + radioInterno;
 
-    return 1 / (radius_j * diffEntreRadios) - 2 / pow(diffEntreRadios, 2) - 2 / ((pow(radius_j, 2)) * pow(diffEntreAngulos, 2));
-
+	return 1 / (radius_j * diffEntreRadios) - 2 / pow(diffEntreRadios, 2) - 2 / ((pow(radius_j, 2)) * pow(diffEntreAngulos, 2));
 }
 
-float coeficienteC(float diffEntreRadios)
+double coeficienteC(double diffEntreRadios)
 { // crea el coeficiente para t_j+1,k
 
 	return 1 / pow(diffEntreRadios, 2);
 }
 
-float coeficienteD(float diffEntreAngulos, float diffEntreRadios, int j, int radioInterno)
+double coeficienteD(double diffEntreAngulos, double diffEntreRadios, int j, int radioInterno)
 { // crea el coeficiente para t_j,k-1 y t_j,k+1
 
-	float radius_j = j * diffEntreRadios + radioInterno;
+	double radius_j = j * diffEntreRadios + radioInterno;
 
 	return 1 / (pow(diffEntreAngulos, 2) * pow(radius_j, 2));
 }
 
-vector<vector<float>> crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared)
+vector<vector<double>> crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared)
 {
-	float diffEntreAngulos = 2 * M_PI / cantAngulos;
-	float diffEntreRadios = (finalPared - comienzoPared) / cantRadios;
+	double diffEntreAngulos = 2 * M_PI / cantAngulos;
+	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios;
 
 	int tam_matriz = cantAngulos * cantRadios;
-	vector<vector<float>> matrizA(tam_matriz, vector<float>(tam_matriz));
-	float coefA, coefB, coefD;
-	float coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
+	vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz));
+	double coefA, coefB, coefD;
+	double coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
 	for (int k = 0; k < cantAngulos; k++)
 	{
 		for (int j = 0; j < cantRadios; j++)
@@ -202,18 +199,19 @@ vector<vector<float>> crearMatrizA(int cantAngulos, int cantRadios, int comienzo
 	return matrizA;
 }
 
-void eliminacionGaussiana (vector<vector<float>>& matrizA){
+void eliminacionGaussiana(vector<vector<double>> &matrizA)
+{
 	for (int i = 0; i < n * m - 1; i++) // para cada columna
+	{
+
+		for (int j = i + 1; j < n * m; j++) // para cada valor por debajo de la diagonal
+		{
+			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
+
+			for (int k = i; k < n * m + 1; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
 			{
-
-				for (int j = i + 1; j < n * m; j++) // para cada valor por debajo de la diagonal
-				{
-					float m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
-
-					for (int k = i; k < n * m + 1; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
-					{
-						matrizA[j][k] = matrizA[j][k] - m_ji * matrizA[i][k];
-					}
-				}
+				matrizA[j][k] = matrizA[j][k] - m_ji * matrizA[i][k];
 			}
+		}
+	}
 }
