@@ -1,5 +1,4 @@
 #include "./main.h"
-#include <math.h>
 
 // Variables
 int internalRadius;
@@ -71,22 +70,43 @@ int main(int argc, char *argv[])
 		}
 
 		int tam_matriz = n * m;
-		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); //Agrego unna columna extra para los B
+		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); //Agrego una columna extra para los B
 		crearMatrizA(n, m, internalRadius, externalRadius, matrizA, 0);
 		
 
-		printMatriz(matrizA);
+		//printMatriz(matrizA);
 
 		if (method == 0)
 		{ // EG
 			eliminacionGaussiana(matrizA);
 		}
 
-		printMatriz(matrizA);
+		resolverSistema(matrizA);
 
-		// idea de resolver el sistema de ecuación:
-		// tratar a la matriz como el sistema de ecuacion, donde cada valor es el coeficiente de la variable que da su columna
-		// ir de abajo pa arriba en la matriz y cambiar el valor de la columna hacia arriba con el valor encontrado, ahí el valor de esa casilla pasa de ser el coeficiente a ser el valor mismo
+		printMatriz(matrizA);
+		
+		ofstream outputFile;
+		outputFile.open(outputFileName);
+		if (outputFile.is_open())
+		{
+			cout << "Escribiendo respuesta" << endl;
+
+			string resultado;
+			for(int i = 0; i<tam_matriz; i++)
+			{
+				resultado = to_string(matrizA[i][tam_matriz]) + "\n";
+
+				outputFile.write(resultado.c_str(), resultado.size());
+			}
+
+			cout << "OK" << endl;
+		}else
+		{
+			throw 503;
+		}
+		
+
+
 	}
 	catch (int e)
 	{
@@ -110,38 +130,12 @@ void handleError(int error)
 	else if (error == 502)
 	{
 		clog << "Error al abrir el archivo de entrada" << endl;
+	}else if (error == 503)
+	{
+		clog << "Error al abrir el archivo de salida" << endl;
 	}
 }
 
-double coeficienteA(double diffEntreRadios, int j, int radioInterno)
-{ // crea el coeficiente para t_j-1,k
-
-	double radius_j = j * diffEntreRadios + radioInterno;
-
-	return 1 / (pow(diffEntreRadios, 2)) - 1 / (radius_j * diffEntreRadios);
-}
-
-double coeficienteB(double diffEntreAngulos, double diffEntreRadios, int j, int radioInterno)
-{ // crea el coeficiente para t_j,k
-
-	double radius_j = j * diffEntreRadios + radioInterno;
-
-	return 1 / (radius_j * diffEntreRadios) - 2 / pow(diffEntreRadios, 2) - 2 / ((pow(radius_j, 2)) * pow(diffEntreAngulos, 2));
-}
-
-double coeficienteC(double diffEntreRadios)
-{ // crea el coeficiente para t_j+1,k
-
-	return 1 / pow(diffEntreRadios, 2);
-}
-
-double coeficienteD(double diffEntreAngulos, double diffEntreRadios, int j, int radioInterno)
-{ // crea el coeficiente para t_j,k-1 y t_j,k+1
-
-	double radius_j = j * diffEntreRadios + radioInterno;
-
-	return 1 / (pow(diffEntreAngulos, 2) * pow(radius_j, 2));
-}
 
 void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia)
 {
@@ -240,5 +234,31 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA)
 				matrizA[j][k] = resultado_de_la_resta;
 			}
 		}
+	}
+}
+
+void resolverSistema(vector<vector<double>> &matrizA)
+{
+	int tamano_matriz = n*m;
+
+	//Se termina de diagonalizar la matriz
+	for (int i = tamano_matriz - 1; i > 0; i--) // para cada columna menos la primera y exluyendo la columna de Bs
+	{
+		for (int j = i - 1; j >= 0; j--) // para cada valor por arriba de la diagonal
+		{
+			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
+			
+			matrizA[j][i] = 0;
+			matrizA[j][i+1] = matrizA[j][i+1] - m_ji * matrizA[i][i+1]; //aplicando movimiento sobre la columna de Bs
+		
+		}
+	}
+
+	//Normalizo la diagonal y obtengo las soluciones
+	for (int i = 0; i < tamano_matriz; i++){
+		
+		matrizA[i][tamano_matriz] =  matrizA[i][tamano_matriz] / matrizA[i][i];
+		matrizA[i][i] = 1;
+
 	}
 }
