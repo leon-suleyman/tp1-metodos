@@ -151,50 +151,71 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 
 	int tam_matriz = cantAngulos * cantRadios;
 
-	double coefA, coefB, coefD;
-	double coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
+	int fila, columna;
+	double coefA, coefB, coefC, coefD;
+	coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
 	for (int k = 0; k < cantAngulos; k++)
 	{
 		for (int j = 0; j < cantRadios; j++)
 		{
 
-			coefA = coeficienteA(diffEntreRadios, j, comienzoPared);
-			coefB = coeficienteB(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
-			coefD = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
-
-			// asignamos "b" a t_j,k
-			matrizA[k * cantRadios + j][k * cantRadios + j] = coefB;
-
-			// asignamos "a" a t_j-1,k
-			if (j != 0)
+			if(j == 0 || j == cantRadios - 1)
 			{
-				matrizA[k * cantRadios + j][k * cantRadios + j - 1] = coefA;
-			}
-
-			// asignamos "c" a t_j+1,k
-			if (j != cantRadios)
-			{
-				matrizA[k * cantRadios + j][k * cantRadios + j + 1] = coefC;
-			}
-
-			// asignamos "d" a t_j,k-1
-			if (k != 0)
-			{ // si no es el angulo 0, k-1 es directo k-1
-				matrizA[k * cantRadios + j][(k - 1) * cantRadios + j] = coefD;
+				//es dato que ya tenemos y por tanto va un 1 en t_j,k y el resto ceros
+				fila = k * cantRadios + j;
+				columna = k * cantRadios + j;
+				matrizA[fila][columna] = 1;
 			}
 			else
-			{ // si es 0, hay que usar el angulo 2*PI para k-1
-				matrizA[k * cantRadios + j][(cantAngulos - 1) * cantRadios + j] = coefD;
-			}
+			{
 
-			// asignamos "d" a t_j,k+1
-			if (k != cantAngulos - 1)
-			{ // si no es n-1, usamos k+1
-				matrizA[k * cantRadios + j][(k + 1) * cantRadios + j] = coefD;
-			}
-			else
-			{ // si es n-1, usamos el angulo 0
-				matrizA[k * cantRadios + j][0 + j] = coefD;
+				coefA = coeficienteA(diffEntreRadios, j, comienzoPared);
+				coefB = coeficienteB(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+				coefD = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+
+				// asignamos "b" a t_j,k
+				fila = k * cantRadios + j;
+				columna = k * cantRadios + j;
+				matrizA[fila][columna] = coefB;
+
+				// asignamos "a" a t_j-1,k
+				fila = k * cantRadios + j;
+				columna = k * cantRadios + j - 1;
+				matrizA[fila][columna] = coefA;
+				
+
+				// asignamos "c" a t_j+1,k
+				fila = k * cantRadios + j;
+				columna = k * cantRadios + j + 1; 
+				matrizA[fila][columna] = coefC;
+
+				// asignamos "d" a t_j,k-1
+				if (k != 0)
+				{ // si no es el angulo 0, k-1 es directo k-1
+					fila = k * cantRadios + j;
+					columna = (k - 1) * cantRadios + j;
+					matrizA[fila][columna] = coefD;
+				}
+				else
+				{ // si es 0, hay que usar el angulo 2*PI para k-1
+					fila = k * cantRadios + j; 
+					columna = (cantAngulos - 1) * cantRadios + j;
+					matrizA[fila][columna] = coefD;
+				}
+
+				// asignamos "d" a t_j,k+1
+				if (k != cantAngulos - 1)
+				{ // si no es n-1, usamos k+1
+					fila = k * cantRadios + j; 
+					columna = (k + 1) * cantRadios + j;
+					matrizA[fila][columna] = coefD;
+				}
+				else
+				{ // si es n-1, usamos el angulo 0
+					fila = k * cantRadios + j; 
+					columna = 0 + j;
+					matrizA[fila][columna] = coefD;
+				}
 			}
 		}
 	}
@@ -209,9 +230,13 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA)
 		{
 			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
 
-			for (int k = i; k < n * m + 1; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
+			for (int k = i; k < n * m; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
 			{
-				matrizA[j][k] = matrizA[j][k] - m_ji * matrizA[i][k];
+				double resultado_de_la_resta = matrizA[j][k] - m_ji * matrizA[i][k];
+				if(abs(resultado_de_la_resta) - 0.000000000001f < 0){
+					resultado_de_la_resta = 0;
+				}
+				matrizA[j][k] = resultado_de_la_resta;
 			}
 		}
 	}
