@@ -151,46 +151,50 @@ vector<vector<float>> crearMatrizA(int cantAngulos, int cantRadios, int comienzo
 
 	int tam_matriz = cantAngulos * cantRadios;
 	vector<vector<float>> matrizA(tam_matriz, vector<float>(tam_matriz));
-
-	float mult_c = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
+	float coefA, coefB, coefD;
+	float coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
 	for (int k = 0; k < cantAngulos; k++)
 	{
 		for (int j = 0; j < cantRadios; j++)
 		{
 
+			coefA = coeficienteA(diffEntreRadios, j, comienzoPared);
+			coefB = coeficienteB(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+			coefD = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+
 			// asignamos "b" a t_j,k
-			matrizA[k * cantRadios + j][k * cantRadios + j] = coeficienteB(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+			matrizA[k * cantRadios + j][k * cantRadios + j] = coefB;
 
 			// asignamos "a" a t_j-1,k
 			if (j != 0)
 			{
-				matrizA[k * cantRadios + j][k * cantRadios + j - 1] = coeficienteA(diffEntreRadios, j, comienzoPared);
+				matrizA[k * cantRadios + j][k * cantRadios + j - 1] = coefA;
 			}
 
 			// asignamos "c" a t_j+1,k
 			if (j != cantRadios)
 			{
-				matrizA[k * cantRadios + j][k * cantRadios + j + 1] = mult_c;
+				matrizA[k * cantRadios + j][k * cantRadios + j + 1] = coefC;
 			}
 
 			// asignamos "d" a t_j,k-1
 			if (k != 0)
 			{ // si no es el angulo 0, k-1 es directo k-1
-				matrizA[k * cantRadios + j][(k - 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+				matrizA[k * cantRadios + j][(k - 1) * cantRadios + j] = coefD;
 			}
 			else
 			{ // si es 0, hay que usar el angulo 2*PI para k-1
-				matrizA[k * cantRadios + j][(cantAngulos - 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+				matrizA[k * cantRadios + j][(cantAngulos - 1) * cantRadios + j] = coefD;
 			}
 
 			// asignamos "d" a t_j,k+1
 			if (k != cantAngulos - 1)
 			{ // si no es n-1, usamos k+1
-				matrizA[k * cantRadios + j][(k + 1) * cantRadios + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+				matrizA[k * cantRadios + j][(k + 1) * cantRadios + j] = coefD;
 			}
 			else
 			{ // si es n-1, usamos el angulo 0
-				matrizA[k * cantRadios + j][0 + j] = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+				matrizA[k * cantRadios + j][0 + j] = coefD;
 			}
 		}
 	}
