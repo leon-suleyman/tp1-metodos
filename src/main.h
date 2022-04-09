@@ -102,6 +102,6 @@ double coeficienteB(double diffEntreAngulos, double diffEntreRadios, int j, int 
 double coeficienteC(double diffEntreRadios);
 double coeficienteD(double diffEntreAngulos, double diffEntreRadios, int j, int radioInterno);
 
-void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA);
+void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia);
 
 void eliminacionGaussiana(vector<vector<double>> &matrizA);

@@ -71,10 +71,9 @@ int main(int argc, char *argv[])
 		}
 
 		int tam_matriz = n * m;
-		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz));
-		crearMatrizA(n, m, internalRadius, externalRadius, matrizA);
-
-		vector<vector<double>> stripB(1, vector<double>(n * m));
+		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); //Agrego unna columna extra para los B
+		crearMatrizA(n, m, internalRadius, externalRadius, matrizA, 0);
+		
 
 		printMatriz(matrizA);
 
@@ -144,15 +143,16 @@ double coeficienteD(double diffEntreAngulos, double diffEntreRadios, int j, int 
 	return 1 / (pow(diffEntreAngulos, 2) * pow(radius_j, 2));
 }
 
-void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA)
+void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia)
 {
-	double diffEntreAngulos = 2 * M_PI / cantAngulos;
-	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios;
+	double diffEntreAngulos = 2 * M_PI / cantAngulos; //deltaTheta
+	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios; //deltaR
 
-	int tam_matriz = cantAngulos * cantRadios;
+	int ultima_columna = cantAngulos * cantRadios; //La columna de los B
+	//se usa directo sin restarle 1 porque es una columna extra
 
 	int fila, columna;
-	double coefA, coefB, coefC, coefD;
+	double coefA, coefB, coefC, coefD; //coeficiente de la ecuación de temperatura
 	coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
 	for (int k = 0; k < cantAngulos; k++)
 	{
@@ -165,6 +165,7 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 				fila = k * cantRadios + j;
 				columna = k * cantRadios + j;
 				matrizA[fila][columna] = 1;
+				matrizA[fila][ultima_columna] = (j == 0) ? internalTemperatures[instancia][k] : externalTemperatures[instancia][k] ;
 			}
 			else
 			{
@@ -223,14 +224,14 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 
 void eliminacionGaussiana(vector<vector<double>> &matrizA)
 {
-	for (int i = 0; i < n * m - 1; i++) // para cada columna
+	for (int i = 0; i < n * m - 1; i++) // para cada columna menos la ultima y excluyendo la columna de Bs
 	{
 
 		for (int j = i + 1; j < n * m; j++) // para cada valor por debajo de la diagonal
 		{
 			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
 
-			for (int k = i; k < n * m; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
+			for (int k = i; k < n * m + 1; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
 			{
 				double resultado_de_la_resta = matrizA[j][k] - m_ji * matrizA[i][k];
 				if(abs(resultado_de_la_resta) - 0.000000000001f < 0){
