@@ -70,7 +70,10 @@ int main(int argc, char *argv[])
 			throw 502;
 		}
 
-		vector<vector<double>> matrizA = crearMatrizA(n, m, internalRadius, externalRadius);
+		int tam_matriz = n * m;
+		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz));
+		crearMatrizA(n, m, internalRadius, externalRadius, matrizA);
+
 		vector<vector<double>> stripB(1, vector<double>(n * m));
 
 		printMatriz(matrizA);
@@ -141,13 +144,13 @@ double coeficienteD(double diffEntreAngulos, double diffEntreRadios, int j, int 
 	return 1 / (pow(diffEntreAngulos, 2) * pow(radius_j, 2));
 }
 
-vector<vector<double>> crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared)
+void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA)
 {
 	double diffEntreAngulos = 2 * M_PI / cantAngulos;
 	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios;
 
 	int tam_matriz = cantAngulos * cantRadios;
-	vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz));
+
 	double coefA, coefB, coefD;
 	double coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
 	for (int k = 0; k < cantAngulos; k++)
@@ -195,8 +198,6 @@ vector<vector<double>> crearMatrizA(int cantAngulos, int cantRadios, int comienz
 			}
 		}
 	}
-
-	return matrizA;
 }
 
 void eliminacionGaussiana(vector<vector<double>> &matrizA)

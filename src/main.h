@@ -72,7 +72,7 @@ double getNextFloatFromInputFile(ifstream &inputFile)
 	return result;
 }
 
-void printMatriz(vector<vector<double>> matriz)
+void printMatriz(vector<vector<double>> &matriz)
 {
 	int cantFilas = matriz.size();
 	int cantColumnas = matriz[0].size();
@@ -102,6 +102,6 @@ double coeficienteB(double diffEntreAngulos, double diffEntreRadios, int j, int 
 double coeficienteC(double diffEntreRadios);
 double coeficienteD(double diffEntreAngulos, double diffEntreRadios, int j, int radioInterno);
 
-vector<vector<double>> crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared);
+void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA);
 
 void eliminacionGaussiana(vector<vector<double>> &matrizA);

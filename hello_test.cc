@@ -22,8 +22,8 @@ TEST(HelloTest, BasicAssertions2)
 
 TEST(MatrizATest, MatrizACorrecta)
 {
-
-	vector<vector<double>> matrizACalculada = crearMatrizA(2, 4, 1, 10);
+	vector<vector<double>> matrizACalculada(2 * 4, vector<double>(2 * 4));
+	crearMatrizA(2, 4, 1, 10, matrizACalculada);
 	double diffEntreAngulos = M_PI;
 	double diffEntreRadios = (10 - 1) / 4;
 	vector<vector<double>> matrizAMano = {{coeficienteB(diffEntreAngulos, diffEntreRadios, 1, 1), coeficienteC(diffEntreRadios), 0.0, 0.0, coeficienteD(diffEntreAngulos, diffEntreRadios, 1, 1), 0.0, 0.0, 0.0},
