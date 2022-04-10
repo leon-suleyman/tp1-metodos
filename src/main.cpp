@@ -249,7 +249,7 @@ void resolverSistema(vector<vector<double>> &matrizA)
 			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
 			
 			matrizA[j][i] = 0;
-			matrizA[j][i+1] = matrizA[j][i+1] - m_ji * matrizA[i][i+1]; //aplicando movimiento sobre la columna de Bs
+			matrizA[j][tamano_matriz] = matrizA[j][tamano_matriz] - m_ji * matrizA[i][tamano_matriz]; //aplicando movimiento sobre la columna de Bs
 		
 		}
 	}
