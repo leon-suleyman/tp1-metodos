@@ -70,11 +70,10 @@ int main(int argc, char *argv[])
 		}
 
 		int tam_matriz = n * m;
-		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); //Agrego una columna extra para los B
+		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); // Agrego unna columna extra para los B
 		crearMatrizA(n, m, internalRadius, externalRadius, matrizA, 0);
-		
 
-		//printMatriz(matrizA);
+		// printMatriz(matrizA);
 
 		if (method == 0)
 		{ // EG
@@ -84,7 +83,7 @@ int main(int argc, char *argv[])
 		resolverSistema(matrizA);
 
 		printMatriz(matrizA);
-		
+
 		ofstream outputFile;
 		outputFile.open(outputFileName);
 		if (outputFile.is_open())
@@ -92,7 +91,7 @@ int main(int argc, char *argv[])
 			cout << "Escribiendo respuesta" << endl;
 
 			string resultado;
-			for(int i = 0; i<tam_matriz; i++)
+			for (int i = 0; i < tam_matriz; i++)
 			{
 				resultado = to_string(matrizA[i][tam_matriz]) + "\n";
 
@@ -100,13 +99,11 @@ int main(int argc, char *argv[])
 			}
 
 			cout << "OK" << endl;
-		}else
+		}
+		else
 		{
 			throw 503;
 		}
-		
-
-
 	}
 	catch (int e)
 	{
@@ -130,36 +127,36 @@ void handleError(int error)
 	else if (error == 502)
 	{
 		clog << "Error al abrir el archivo de entrada" << endl;
-	}else if (error == 503)
+	}
+	else if (error == 503)
 	{
 		clog << "Error al abrir el archivo de salida" << endl;
 	}
 }
 
-
 void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia)
 {
-	double diffEntreAngulos = 2 * M_PI / cantAngulos; //deltaTheta
-	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios; //deltaR
+	double diffEntreAngulos = 2 * M_PI / cantAngulos;					// deltaTheta
+	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios; // deltaR
 
-	int ultima_columna = cantAngulos * cantRadios; //La columna de los B
-	//se usa directo sin restarle 1 porque es una columna extra
+	int ultima_columna = cantAngulos * cantRadios; // La columna de los B
+	// se usa directo sin restarle 1 porque es una columna extra
 
 	int fila, columna;
-	double coefA, coefB, coefC, coefD; //coeficiente de la ecuación de temperatura
+	double coefA, coefB, coefC, coefD;	   // coeficiente de la ecuación de temperatura
 	coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
 	for (int k = 0; k < cantAngulos; k++)
 	{
 		for (int j = 0; j < cantRadios; j++)
 		{
 
-			if(j == 0 || j == cantRadios - 1)
+			if (j == 0 || j == cantRadios - 1)
 			{
-				//es dato que ya tenemos y por tanto va un 1 en t_j,k y el resto ceros
+				// es dato que ya tenemos y por tanto va un 1 en t_j,k y el resto ceros
 				fila = k * cantRadios + j;
 				columna = k * cantRadios + j;
 				matrizA[fila][columna] = 1;
-				matrizA[fila][ultima_columna] = (j == 0) ? internalTemperatures[instancia][k] : externalTemperatures[instancia][k] ;
+				matrizA[fila][ultima_columna] = (j == 0) ? internalTemperatures[instancia][k] : externalTemperatures[instancia][k];
 			}
 			else
 			{
@@ -177,11 +174,10 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 				fila = k * cantRadios + j;
 				columna = k * cantRadios + j - 1;
 				matrizA[fila][columna] = coefA;
-				
 
 				// asignamos "c" a t_j+1,k
 				fila = k * cantRadios + j;
-				columna = k * cantRadios + j + 1; 
+				columna = k * cantRadios + j + 1;
 				matrizA[fila][columna] = coefC;
 
 				// asignamos "d" a t_j,k-1
@@ -193,7 +189,7 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 				}
 				else
 				{ // si es 0, hay que usar el angulo 2*PI para k-1
-					fila = k * cantRadios + j; 
+					fila = k * cantRadios + j;
 					columna = (cantAngulos - 1) * cantRadios + j;
 					matrizA[fila][columna] = coefD;
 				}
@@ -201,13 +197,13 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 				// asignamos "d" a t_j,k+1
 				if (k != cantAngulos - 1)
 				{ // si no es n-1, usamos k+1
-					fila = k * cantRadios + j; 
+					fila = k * cantRadios + j;
 					columna = (k + 1) * cantRadios + j;
 					matrizA[fila][columna] = coefD;
 				}
 				else
 				{ // si es n-1, usamos el angulo 0
-					fila = k * cantRadios + j; 
+					fila = k * cantRadios + j;
 					columna = 0 + j;
 					matrizA[fila][columna] = coefD;
 				}
@@ -228,7 +224,8 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA)
 			for (int k = i; k < n * m + 1; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
 			{
 				double resultado_de_la_resta = matrizA[j][k] - m_ji * matrizA[i][k];
-				if(abs(resultado_de_la_resta) - 0.000000000001f < 0){
+				if (abs(resultado_de_la_resta) - 0.000000000001f < 0)
+				{
 					resultado_de_la_resta = 0;
 				}
 				matrizA[j][k] = resultado_de_la_resta;
@@ -239,26 +236,25 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA)
 
 void resolverSistema(vector<vector<double>> &matrizA)
 {
-	int tamano_matriz = n*m;
+	int tamano_matriz = n * m;
 
-	//Se termina de diagonalizar la matriz
+	// Se termina de diagonalizar la matriz
 	for (int i = tamano_matriz - 1; i > 0; i--) // para cada columna menos la primera y exluyendo la columna de Bs
 	{
 		for (int j = i - 1; j >= 0; j--) // para cada valor por arriba de la diagonal
 		{
 			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
-			
+
 			matrizA[j][i] = 0;
-			matrizA[j][tamano_matriz] = matrizA[j][tamano_matriz] - m_ji * matrizA[i][tamano_matriz]; //aplicando movimiento sobre la columna de Bs
-		
+			matrizA[j][tamano_matriz] = matrizA[j][tamano_matriz] - m_ji * matrizA[i][tamano_matriz]; // aplicando movimiento sobre la columna de Bs
 		}
 	}
 
-	//Normalizo la diagonal y obtengo las soluciones
-	for (int i = 0; i < tamano_matriz; i++){
-		
-		matrizA[i][tamano_matriz] =  matrizA[i][tamano_matriz] / matrizA[i][i];
-		matrizA[i][i] = 1;
+	// Normalizo la diagonal y obtengo las soluciones
+	for (int i = 0; i < tamano_matriz; i++)
+	{
 
+		matrizA[i][tamano_matriz] = matrizA[i][tamano_matriz] / matrizA[i][i];
+		matrizA[i][i] = 1;
 	}
 }
