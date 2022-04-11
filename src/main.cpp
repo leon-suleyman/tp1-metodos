@@ -75,18 +75,10 @@ int main(int argc, char *argv[])
 		crearMatrizA(n, m, internalRadius, externalRadius, matrizA, 0);
 
 		// printMatriz(matrizA);
-		// inicio el reloj para medir la duración del algoritmo
-    	auto start = chrono::steady_clock::now();
-		
+
 		eliminacionGaussiana(matrizA);
 
 		resolverSistema(matrizA);
-
-		// calculo cuanto tardó la ejecución
-		auto end = chrono::steady_clock::now();
-		double tiempoDeEjecucion = chrono::duration<double, milli>(end - start).count();
-
-		clog << tiempoDeEjecucion << endl;
 
 		printMatriz(matrizA);
 
@@ -264,8 +256,57 @@ void resolverSistema(vector<vector<double>> &matrizA)
 	// Normalizo la diagonal y obtengo las soluciones
 	for (int i = 0; i < tamano_matriz; i++)
 	{
-
 		matrizA[i][tamano_matriz] = matrizA[i][tamano_matriz] / matrizA[i][i];
 		matrizA[i][i] = 1;
 	}
+}
+
+void resolucionLU(vector<vector<double>> &matrizA)
+{
+	// asumo que para este punto ya se llamó a EG
+	auto y = resolverLYB(matrizA);
+	auto x = resolverUXY(matrizA);
+}
+
+vector<double> resolverLYB(vector<vector<double>> matrizA)
+{
+	// L es una matriz que tiene 1s en la diagonal y 0s por encima de la diagonal
+	int tamano_matriz = n * m;
+	vector<double> y(tamano_matriz);
+	int sumando = 0;
+	for (int fila = 0; fila < tamano_matriz - 1; fila++) // para cada fila
+	{
+		for (int columna = 0; columna <= fila; columna++)
+		{ // para cada columna
+			if (fila == columna)
+			{ // si estoy en la diagonal y_fila = y_fila + b_fila
+				sumando = sumando + matrizA[fila][tamano_matriz];
+			}
+			else
+			{ // sino y_fila es y_fila + b_fila/ multiplicador de y_fila
+				sumando = sumando + matrizA[fila][tamano_matriz] / matrizA[fila][columna];
+			}
+		}
+		y[fila] = sumando;
+		sumando = 0;
+	}
+	return y;
+}
+
+vector<double> resolverUXY(vector<vector<double>> matrizA)
+{
+	// L es una matriz que tiene 1s en la diagonal y 0s por encima de la diagonal
+	int tamano_matriz = n * m;
+	vector<double> x(tamano_matriz);
+	int sumando = 0;
+	for (int fila = tamano_matriz - 1; fila >= 0; fila--) // para cada fila desde el final
+	{
+		for (int columna = tamano_matriz - 1; columna >= fila; columna--) //// para cada columna
+		{
+			sumando = sumando + matrizA[fila][tamano_matriz] / matrizA[fila][columna];
+		}
+		x[fila] = sumando;
+		sumando = 0;
+	}
+	return x;
 }
