@@ -76,9 +76,18 @@ int main(int argc, char *argv[])
 
 		// printMatriz(matrizA);
 
+		// inicio el reloj para medir la duración del algoritmo
+		auto start = chrono::steady_clock::now();
+
 		eliminacionGaussiana(matrizA);
 
 		resolverSistema(matrizA);
+
+		// calculo cuanto tardó la ejecución
+		auto end = chrono::steady_clock::now();
+		double tiempoDeEjecucion = chrono::duration<double, milli>(end - start).count();
+
+		clog << tiempoDeEjecucion << endl;
 
 		printMatriz(matrizA);
 

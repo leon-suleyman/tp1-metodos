@@ -135,3 +135,6 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 void eliminacionGaussiana(vector<vector<double>> &matrizA);
 
 void resolverSistema(vector<vector<double>> &matrizA);
+
+vector<double> resolverLYB(vector<vector<double>> matrizA);
+vector<double> resolverUXY(vector<vector<double>> matrizA);
