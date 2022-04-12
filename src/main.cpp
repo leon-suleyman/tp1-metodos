@@ -81,7 +81,13 @@ int main(int argc, char *argv[])
 
 		eliminacionGaussiana(matrizA);
 
-		resolverSistema(matrizA);
+		if (method == 0)
+		{
+			resolverSistema(matrizA);
+		} else 
+		{
+			resolucionLU(matrizA);
+		}
 
 		// calculo cuanto tardó la ejecución
 		auto end = chrono::steady_clock::now();
@@ -242,8 +248,11 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA)
 			{
 				matrizA[j][i] = m_ji;
 			}
+
+
 		}
 	}
+	printMatriz(matrizA);
 }
 
 void resolverSistema(vector<vector<double>> &matrizA)
@@ -274,48 +283,55 @@ void resolucionLU(vector<vector<double>> &matrizA)
 {
 	// asumo que para este punto ya se llamó a EG
 	auto y = resolverLYB(matrizA);
-	auto x = resolverUXY(matrizA);
+	resolverUXY(matrizA, y);
 }
 
-vector<double> resolverLYB(vector<vector<double>> matrizA)
+vector<double> resolverLYB(vector<vector<double>> &matrizA)
 {
 	// L es una matriz que tiene 1s en la diagonal y 0s por encima de la diagonal
 	int tamano_matriz = n * m;
 	vector<double> y(tamano_matriz);
-	int sumando = 0;
-	for (int fila = 0; fila < tamano_matriz - 1; fila++) // para cada fila
+	for (int fila = 1; fila < tamano_matriz - 1; fila++) // para cada fila
 	{
-		for (int columna = 0; columna <= fila; columna++)
+		double sumando = 0;
+		double diag = matrizA[fila][fila];
+		for (int columna = 1; columna < fila; columna++)
 		{ // para cada columna
-			if (fila == columna)
-			{ // si estoy en la diagonal y_fila = y_fila + b_fila
-				sumando = sumando + matrizA[fila][tamano_matriz];
-			}
-			else
-			{ // sino y_fila es y_fila + b_fila/ multiplicador de y_fila
-				sumando = sumando + matrizA[fila][tamano_matriz] / matrizA[fila][columna];
-			}
+		 	// sino y_fila es y_fila + b_fila/ multiplicador de y_fila
+				sumando += matrizA[fila][columna] * y[columna];
+			
 		}
-		y[fila] = sumando;
-		sumando = 0;
+		double resta = matrizA[fila][tamano_matriz] - sumando;
+		if (abs(resta) - 0.000000000001f < 0)
+		{
+			resta = 0;
+		}
+		y[fila] = resta / diag;
 	}
 	return y;
 }
 
-vector<double> resolverUXY(vector<vector<double>> matrizA)
+void resolverUXY(vector<vector<double>> &matrizA, vector<double> &y)
 {
 	// L es una matriz que tiene 1s en la diagonal y 0s por encima de la diagonal
 	int tamano_matriz = n * m;
 	vector<double> x(tamano_matriz);
-	int sumando = 0;
 	for (int fila = tamano_matriz - 1; fila >= 0; fila--) // para cada fila desde el final
 	{
-		for (int columna = tamano_matriz - 1; columna >= fila; columna--) //// para cada columna
+		double sumando = 0;
+		
+		for (int columna = tamano_matriz - 2; columna > fila; columna--) //// para cada columna
 		{
-			sumando = sumando + matrizA[fila][tamano_matriz] / matrizA[fila][columna];
+			sumando += matrizA[fila][columna] * y[columna];
 		}
-		x[fila] = sumando;
-		sumando = 0;
+		double resta = y[fila] - sumando;
+		if (abs(resta) - 0.000000000001f < 0)
+		{
+			resta = 0;
+		}
+		x[fila] = resta/matrizA[fila][fila];
 	}
-	return x;
+	for (int i = 0; i<tamano_matriz; i++){
+		matrizA[i][tamano_matriz] = x[i];	
+	}
 }
