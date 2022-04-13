@@ -99,7 +99,6 @@ void printMatriz(vector<vector<double>> &matriz)
 
 void handleError(int);
 
-
 double coeficienteA(double diffEntreRadios, int j, int radioInterno)
 { // crea el coeficiente para t_j-1,k
 
@@ -136,6 +135,6 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA);
 
 void resolverSistema(vector<vector<double>> &matrizA);
 
-void resolucionLU(vector<vector<double>> &matrizA);
-vector<double> resolverLYB(vector<vector<double>> &matrizA);
+void resolucionLU(vector<vector<double>> &matrizA, vector<double> &b);
+vector<double> resolverLYB(vector<vector<double>> &matrizA, vector<double> &b);
 void resolverUXY(vector<vector<double>> &matrizA, vector<double> &y);
