@@ -135,6 +135,9 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA);
 
 void resolverSistema(vector<vector<double>> &matrizA);
 
-void resolucionLU(vector<vector<double>> &matrizA);
+void resolucionLU(vector<vector<double>> &matrizA, bool conseguirLU);
 void resolverLYB(vector<vector<double>> &matrizA);
 void resolverUXY(vector<vector<double>> &matrizA);
+
+void cargarInstanciaEn(vector<vector<double>> &matrizA, int inst); // carga una instancia en la ultima columna de la matriz
+void guardarResultados(vector<vector<double>> &matrizA);		   // guarda la ultima columna de la matriz en un vector de resultados

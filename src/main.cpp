@@ -8,6 +8,7 @@ int n; // particiones angulares
 int isoterma;
 int numeroDeInstancias;
 int method;
+vector<vector<double>> resultados;
 
 vector<vector<double>> internalTemperatures;
 vector<vector<double>> externalTemperatures;
@@ -77,16 +78,19 @@ int main(int argc, char *argv[])
 
 		// inicio el reloj para medir la duración del algoritmo
 		auto start = chrono::steady_clock::now();
-
-		eliminacionGaussiana(matrizA);
-
-		if (method == 0)
+		for (int inst = 0; inst < numeroDeInstancias; inst++)
 		{
-			resolverSistema(matrizA);
-		}
-		else
-		{
-			resolucionLU(matrizA);
+			cargarInstanciaEn(matrizA, inst); // cargo la instancia
+			if (method == 0)
+			{
+				vector<vector<double>> copiaA = matrizA; // me copio la matrizA porque EG la rompe toda
+				eliminacionGaussiana(copiaA);			 // EG
+			}
+			else
+			{
+				resolucionLU(matrizA, inst);
+			}
+			guardarResultados(matrizA);
 		}
 
 		// calculo cuanto tardó la ejecución
@@ -104,11 +108,13 @@ int main(int argc, char *argv[])
 			cout << "Escribiendo respuesta" << endl;
 
 			string resultado;
-			for (int i = 0; i < tam_matriz; i++)
+			for (int instancia = 0; instancia < numeroDeInstancias; instancia++)
 			{
-				resultado = to_string(matrizA[i][tam_matriz]) + "\n";
-
-				outputFile.write(resultado.c_str(), resultado.size());
+				for (int i = 0; i < tam_matriz; i++)
+				{
+					resultado = to_string(resultados[instancia][i]) + "\n";
+					outputFile.write(resultado.c_str(), resultado.size());
+				}
 			}
 
 			cout << "OK" << endl;
@@ -277,9 +283,12 @@ void resolverSistema(vector<vector<double>> &matrizA)
 	}
 }
 
-void resolucionLU(vector<vector<double>> &matrizA)
+void resolucionLU(vector<vector<double>> &matrizA, bool conseguirLU)
 {
-	// asumo que para este punto ya se llamó a EG
+	if (conseguirLU)
+	{
+		eliminacionGaussiana(matrizA);
+	}
 	resolverLYB(matrizA);
 	resolverUXY(matrizA);
 }
@@ -322,4 +331,30 @@ void resolverUXY(vector<vector<double>> &matrizA)
 		}
 		matrizA[fila][tamano_matriz] = resta / matrizA[fila][fila];
 	}
+}
+
+void cargarInstanciaEn(vector<vector<double>> &matrizA, int inst)
+{
+	int cantRadios = m;
+	int cantAngulos = n;
+	int ultimaColumna = m * n;
+	int fila;
+	for (int k = 0; k < cantAngulos; k++)
+	{
+		fila = k * cantRadios;
+		matrizA[fila][ultimaColumna] = internalTemperatures[inst][k];
+		fila = k * cantRadios + cantRadios - 1;
+		matrizA[fila][ultimaColumna] = internalTemperatures[inst][k];
+	}
+}
+
+void guardarResultados(vector<vector<double>> &matrizA)
+{
+	vector<double> res;
+	int tamano_matriz = n * m;
+	for (int fila = 0; fila < n * m; fila++)
+	{
+		res.push_back(matrizA[fila][tamano_matriz]);
+	}
+	resultados.push_back(res);
 }
