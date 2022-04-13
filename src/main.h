@@ -135,6 +135,6 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA);
 
 void resolverSistema(vector<vector<double>> &matrizA);
 
-void resolucionLU(vector<vector<double>> &matrizA, vector<double> &b);
-vector<double> resolverLYB(vector<vector<double>> &matrizA, vector<double> &b);
-void resolverUXY(vector<vector<double>> &matrizA, vector<double> &y);
+void resolucionLU(vector<vector<double>> &matrizA);
+void resolverLYB(vector<vector<double>> &matrizA);
+void resolverUXY(vector<vector<double>> &matrizA);
