@@ -9,8 +9,8 @@ int isoterma;
 int numeroDeInstancias;
 int method;
 
-vector<vector<double>> internalTemperatures;
-vector<vector<double>> externalTemperatures;
+vector<vector<float>> internalTemperatures;
+vector<vector<float>> externalTemperatures;
 
 int main(int argc, char *argv[])
 {
@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 
 			numeroDeInstancias = getNextIntFromInputFile(inputFile);
 
-			vector<double> temps(n);
+			vector<float> temps(n);
 			for (int j = 0; j < numeroDeInstancias; j++)
 			{
 				for (int i = 0; i < n; i++)
@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 		}
 
 		int tam_matriz = n * m;
-		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); // Agrego una columna extra para los B
+		vector<vector<float>> matrizA(tam_matriz, vector<float>(tam_matriz + 1)); // Agrego una columna extra para los B
 		crearMatrizA(n, m, internalRadius, externalRadius, matrizA, 0);
 		// printMatriz(matrizA);
 
@@ -147,16 +147,16 @@ void handleError(int error)
 	}
 }
 
-void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia)
+void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<float>> &matrizA, int instancia)
 {
-	double diffEntreAngulos = 2 * M_PI / cantAngulos;					// deltaTheta
-	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios; // deltaR
+	float diffEntreAngulos = 2 * M_PI / cantAngulos;					// deltaTheta
+	float diffEntreRadios = (finalPared - comienzoPared) / cantRadios; // deltaR
 
 	int ultima_columna = cantAngulos * cantRadios; // La columna de los B
 	// se usa directo sin restarle 1 porque es una columna extra
 
 	int fila, columna;
-	double coefA, coefB, coefC, coefD;	   // coeficiente de la ecuación de temperatura
+	float coefA, coefB, coefC, coefD;	   // coeficiente de la ecuación de temperatura
 	coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
 	for (int k = 0; k < cantAngulos; k++)
 	{
@@ -225,18 +225,18 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 	}
 }
 
-void eliminacionGaussiana(vector<vector<double>> &matrizA)
+void eliminacionGaussiana(vector<vector<float>> &matrizA)
 {
 	for (int i = 0; i < n * m - 1; i++) // para cada columna menos la ultima y excluyendo la columna de Bs
 	{
 
 		for (int j = i + 1; j < n * m; j++) // para cada valor por debajo de la diagonal
 		{
-			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
+			float m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
 
 			for (int k = i; k < n * m + 1 - method; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
 			{
-				double resultado_de_la_resta = matrizA[j][k] - m_ji * matrizA[i][k];
+				float resultado_de_la_resta = matrizA[j][k] - m_ji * matrizA[i][k];
 				if (abs(resultado_de_la_resta) - 0.000000000001f < 0)
 				{
 					resultado_de_la_resta = 0;
@@ -253,7 +253,7 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA)
 	printMatriz(matrizA);
 }
 
-void resolverSistema(vector<vector<double>> &matrizA)
+void resolverSistema(vector<vector<float>> &matrizA)
 {
 	int tamano_matriz = n * m;
 
@@ -262,7 +262,7 @@ void resolverSistema(vector<vector<double>> &matrizA)
 	{
 		for (int j = i - 1; j >= 0; j--) // para cada valor por arriba de la diagonal
 		{
-			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
+			float m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
 
 			matrizA[j][i] = 0;
 			matrizA[j][tamano_matriz] = matrizA[j][tamano_matriz] - m_ji * matrizA[i][tamano_matriz]; // aplicando movimiento sobre la columna de Bs
@@ -277,25 +277,25 @@ void resolverSistema(vector<vector<double>> &matrizA)
 	}
 }
 
-void resolucionLU(vector<vector<double>> &matrizA)
+void resolucionLU(vector<vector<float>> &matrizA)
 {
 	// asumo que para este punto ya se llamó a EG
 	resolverLYB(matrizA);
 	resolverUXY(matrizA);
 }
 
-void resolverLYB(vector<vector<double>> &matrizA)
+void resolverLYB(vector<vector<float>> &matrizA)
 {
 	// L es una matriz que tiene 1s en la diagonal y 0s por encima de la diagonal
 	int tamano_matriz = n * m;
 	for (int fila = 0; fila < tamano_matriz; fila++) // para cada fila
 	{
-		double sumando = 0;
+		float sumando = 0;
 		for (int columna = 0; columna < fila; columna++)
 		{
 			sumando += matrizA[fila][columna] * matrizA[columna][tamano_matriz];
 		}
-		double resta = matrizA[fila][tamano_matriz] - sumando;
+		float resta = matrizA[fila][tamano_matriz] - sumando;
 		if (abs(resta) - 0.000000000001f < 0)
 		{
 			resta = 0;
@@ -304,18 +304,18 @@ void resolverLYB(vector<vector<double>> &matrizA)
 	}
 }
 
-void resolverUXY(vector<vector<double>> &matrizA)
+void resolverUXY(vector<vector<float>> &matrizA)
 {
 	int tamano_matriz = n * m;
 	for (int fila = tamano_matriz - 1; fila >= 0; fila--) // para cada fila desde el final
 	{
-		double sumando = 0;
+		float sumando = 0;
 
 		for (int columna = tamano_matriz - 1; columna > fila; columna--) //// para cada columna
 		{
 			sumando += matrizA[fila][columna] * matrizA[columna][tamano_matriz];
 		}
-		double resta = matrizA[fila][tamano_matriz] - sumando;
+		float resta = matrizA[fila][tamano_matriz] - sumando;
 		if (abs(resta) - 0.000000000001f < 0)
 		{
 			resta = 0;
