@@ -53,13 +53,13 @@ int main(int argc, char *argv[])
 			{
 				for (int i = 0; i < n; i++)
 				{
-					temps[i] = getNextFloatFromInputFile(inputFile);
+					temps[i] = getNextDoubletFromInputFile(inputFile);
 				}
 				internalTemperatures.push_back(temps);
 
 				for (int i = 0; i < n; i++)
 				{
-					temps[i] = getNextFloatFromInputFile(inputFile);
+					temps[i] = getNextDoubletFromInputFile(inputFile);
 				}
 				externalTemperatures.push_back(temps);
 			}

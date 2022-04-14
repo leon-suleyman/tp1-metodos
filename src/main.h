@@ -29,7 +29,7 @@ int parseIntFromString(string string)
 	return result;
 }
 
-double parseFloatFromString(string string)
+double parseDoubleFromString(string string)
 {
 
 	double result;
@@ -62,14 +62,14 @@ int getNextIntFromInputFile(ifstream &inputFile)
 	return result;
 }
 
-double getNextFloatFromInputFile(ifstream &inputFile)
+double getNextDoubletFromInputFile(ifstream &inputFile)
 {
 
 	double result;
 	string nextValue;
 
 	inputFile >> nextValue;
-	result = parseFloatFromString(nextValue);
+	result = parseDoubleFromString(nextValue);
 
 	return result;
 }
