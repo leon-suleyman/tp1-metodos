@@ -285,9 +285,9 @@ void resolverSistema(vector<vector<double>> &matrizA)
 	}
 }
 
-void resolucionLU(vector<vector<double>> &matrizA, bool conseguirLU)
+void resolucionLU(vector<vector<double>> &matrizA, int inst)
 {
-	if (conseguirLU)
+	if (inst == 0)
 	{
 		eliminacionGaussiana(matrizA);
 	}
