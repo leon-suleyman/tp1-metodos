@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
 		int tam_matriz = n * m;
 		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); // Agrego una columna extra para los B
 		crearMatrizA(n, m, internalRadius, externalRadius, matrizA, 0);
-		// printMatriz(matrizA);
+		
 
 		// inicio el reloj para medir la duración del algoritmo
 		auto start = chrono::steady_clock::now();
@@ -87,11 +87,15 @@ int main(int argc, char *argv[])
 				eliminacionGaussiana(copiaA);			 // EG
 				resolverSistema(copiaA);
 				guardarResultados(copiaA);
+
+				printMatriz(copiaA);
 			}
 			else
 			{
 				resolucionLU(matrizA, inst);
 				guardarResultados(matrizA);
+				
+				printMatriz(matrizA);
 			}
 		}
 
@@ -100,8 +104,6 @@ int main(int argc, char *argv[])
 		double tiempoDeEjecucion = chrono::duration<double, milli>(end - start).count();
 
 		clog << tiempoDeEjecucion << endl;
-
-		printMatriz(matrizA);
 
 		ofstream outputFile;
 		outputFile.open(outputFileName);
@@ -155,6 +157,84 @@ void handleError(int error)
 	}
 }
 
+// void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia)
+// {
+// 	double diffEntreAngulos = 2 * M_PI / cantAngulos;					// deltaTheta
+// 	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios; // deltaR
+
+// 	int ultima_columna = cantAngulos * cantRadios; // La columna de los B
+// 	// se usa directo sin restarle 1 porque es una columna extra
+
+// 	int fila, columna;
+// 	double coefA, coefB, coefC, coefD;	   // coeficiente de la ecuación de temperatura
+// 	coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
+// 	for (int k = 0; k < cantAngulos; k++)
+// 	{
+// 		for (int j = 0; j < cantRadios; j++)
+// 		{
+
+// 			if (j == 0 || j == cantRadios - 1)
+// 			{
+// 				// es dato que ya tenemos y por tanto va un 1 en t_j,k y el resto ceros
+// 				fila = k * cantRadios + j;
+// 				columna = k * cantRadios + j;
+// 				matrizA[fila][columna] = 1;
+// 				matrizA[fila][ultima_columna] = (j == 0) ? internalTemperatures[instancia][k] : externalTemperatures[instancia][k];
+// 			}
+// 			else
+// 			{
+
+// 				coefA = coeficienteA(diffEntreRadios, j, comienzoPared);
+// 				coefB = coeficienteB(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+// 				coefD = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
+
+// 				// asignamos "b" a t_j,k
+// 				fila = k * cantRadios + j;
+// 				columna = k * cantRadios + j;
+// 				matrizA[fila][columna] = coefB;
+
+// 				// asignamos "a" a t_j-1,k
+// 				fila = k * cantRadios + j;
+// 				columna = k * cantRadios + j - 1;
+// 				matrizA[fila][columna] = coefA;
+
+// 				// asignamos "c" a t_j+1,k
+// 				fila = k * cantRadios + j;
+// 				columna = k * cantRadios + j + 1;
+// 				matrizA[fila][columna] = coefC;
+
+// 				// asignamos "d" a t_j,k-1
+// 				if (k != 0)
+// 				{ // si no es el angulo 0, k-1 es directo k-1
+// 					fila = k * cantRadios + j;
+// 					columna = (k - 1) * cantRadios + j;
+// 					matrizA[fila][columna] = coefD;
+// 				}
+// 				else
+// 				{ // si es 0, hay que usar el angulo 2*PI para k-1
+// 					fila = k * cantRadios + j;
+// 					columna = (cantAngulos - 1) * cantRadios + j;
+// 					matrizA[fila][columna] = coefD;
+// 				}
+
+// 				// asignamos "d" a t_j,k+1
+// 				if (k != cantAngulos - 1)
+// 				{ // si no es n-1, usamos k+1
+// 					fila = k * cantRadios + j;
+// 					columna = (k + 1) * cantRadios + j;
+// 					matrizA[fila][columna] = coefD;
+// 				}
+// 				else
+// 				{ // si es n-1, usamos el angulo 0
+// 					fila = k * cantRadios + j;
+// 					columna = 0 + j;
+// 					matrizA[fila][columna] = coefD;
+// 				}
+// 			}
+// 		}
+// 	}
+// }
+
 void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia)
 {
 	double diffEntreAngulos = 2 * M_PI / cantAngulos;					// deltaTheta
@@ -166,16 +246,16 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 	int fila, columna;
 	double coefA, coefB, coefC, coefD;	   // coeficiente de la ecuación de temperatura
 	coefC = coeficienteC(diffEntreRadios); // pre calculamos "c" ya que no necesita j
-	for (int k = 0; k < cantAngulos; k++)
+	for (int j = 0; j < cantRadios; j++)
 	{
-		for (int j = 0; j < cantRadios; j++)
+		for (int k = 0; k < cantAngulos; k++)
 		{
 
 			if (j == 0 || j == cantRadios - 1)
 			{
 				// es dato que ya tenemos y por tanto va un 1 en t_j,k y el resto ceros
-				fila = k * cantRadios + j;
-				columna = k * cantRadios + j;
+				fila = j * cantAngulos + k;
+				columna = j * cantAngulos + k;
 				matrizA[fila][columna] = 1;
 				matrizA[fila][ultima_columna] = (j == 0) ? internalTemperatures[instancia][k] : externalTemperatures[instancia][k];
 			}
@@ -187,51 +267,52 @@ void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalP
 				coefD = coeficienteD(diffEntreAngulos, diffEntreRadios, j, comienzoPared);
 
 				// asignamos "b" a t_j,k
-				fila = k * cantRadios + j;
-				columna = k * cantRadios + j;
+				fila = j * cantAngulos + k;
+				columna = j * cantAngulos + k;
 				matrizA[fila][columna] = coefB;
 
 				// asignamos "a" a t_j-1,k
-				fila = k * cantRadios + j;
-				columna = k * cantRadios + j - 1;
+				fila = j * cantAngulos + k;
+				columna = (j-1) * cantAngulos + k;
 				matrizA[fila][columna] = coefA;
 
 				// asignamos "c" a t_j+1,k
-				fila = k * cantRadios + j;
-				columna = k * cantRadios + j + 1;
+				fila = j * cantAngulos + k;
+				columna = (j+1) * cantAngulos + k;
 				matrizA[fila][columna] = coefC;
 
 				// asignamos "d" a t_j,k-1
 				if (k != 0)
 				{ // si no es el angulo 0, k-1 es directo k-1
-					fila = k * cantRadios + j;
-					columna = (k - 1) * cantRadios + j;
+					fila = j * cantAngulos + k;
+					columna = j * cantAngulos + k-1;
 					matrizA[fila][columna] = coefD;
 				}
 				else
 				{ // si es 0, hay que usar el angulo 2*PI para k-1
-					fila = k * cantRadios + j;
-					columna = (cantAngulos - 1) * cantRadios + j;
+					fila = j * cantAngulos + k;
+					columna = j * cantAngulos + (cantAngulos - 1);
 					matrizA[fila][columna] = coefD;
 				}
 
 				// asignamos "d" a t_j,k+1
 				if (k != cantAngulos - 1)
 				{ // si no es n-1, usamos k+1
-					fila = k * cantRadios + j;
-					columna = (k + 1) * cantRadios + j;
+					fila = j * cantAngulos + k;
+					columna = j * cantAngulos + k+1;
 					matrizA[fila][columna] = coefD;
 				}
 				else
 				{ // si es n-1, usamos el angulo 0
-					fila = k * cantRadios + j;
-					columna = 0 + j;
+					fila = j * cantAngulos + k;
+					columna = j * cantAngulos;
 					matrizA[fila][columna] = coefD;
 				}
 			}
 		}
 	}
 }
+
 
 void eliminacionGaussiana(vector<vector<double>> &matrizA)
 {
@@ -258,7 +339,6 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA)
 			}
 		}
 	}
-	printMatriz(matrizA);
 }
 
 void resolverSistema(vector<vector<double>> &matrizA)
@@ -343,9 +423,9 @@ void cargarInstanciaEn(vector<vector<double>> &matrizA, int inst)
 	int fila;
 	for (int k = 0; k < cantAngulos; k++)
 	{
-		fila = k * cantRadios;
+		fila = k;
 		matrizA[fila][ultimaColumna] = internalTemperatures[inst][k];
-		fila = k * cantRadios + cantRadios - 1;
+		fila = (cantAngulos -1) * cantRadios + k;
 		matrizA[fila][ultimaColumna] = externalTemperatures[inst][k];
 	}
 }
