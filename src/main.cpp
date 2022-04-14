@@ -88,14 +88,14 @@ int main(int argc, char *argv[])
 				resolverSistema(copiaA);
 				guardarResultados(copiaA);
 
-				printMatriz(copiaA);
+				//printMatriz(copiaA);
 			}
 			else
 			{
 				resolucionLU(matrizA, inst);
 				guardarResultados(matrizA);
 				
-				printMatriz(matrizA);
+				//printMatriz(matrizA);
 			}
 		}
 
