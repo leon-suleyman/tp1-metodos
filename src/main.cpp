@@ -85,12 +85,14 @@ int main(int argc, char *argv[])
 			{
 				vector<vector<double>> copiaA = matrizA; // me copio la matrizA porque EG la rompe toda
 				eliminacionGaussiana(copiaA);			 // EG
+				resolverSistema(copiaA);
+				guardarResultados(copiaA);
 			}
 			else
 			{
 				resolucionLU(matrizA, inst);
+				guardarResultados(matrizA);
 			}
-			guardarResultados(matrizA);
 		}
 
 		// calculo cuanto tardó la ejecución
@@ -344,7 +346,7 @@ void cargarInstanciaEn(vector<vector<double>> &matrizA, int inst)
 		fila = k * cantRadios;
 		matrizA[fila][ultimaColumna] = internalTemperatures[inst][k];
 		fila = k * cantRadios + cantRadios - 1;
-		matrizA[fila][ultimaColumna] = internalTemperatures[inst][k];
+		matrizA[fila][ultimaColumna] = externalTemperatures[inst][k];
 	}
 }
 
