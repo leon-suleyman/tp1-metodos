@@ -74,7 +74,6 @@ int main(int argc, char *argv[])
 		int tam_matriz = n * m;
 		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); // Agrego una columna extra para los B
 		crearMatrizA(n, m, internalRadius, externalRadius, matrizA, 0);
-		
 
 		// inicio el reloj para medir la duración del algoritmo
 		auto start = chrono::steady_clock::now();
@@ -127,6 +126,8 @@ int main(int argc, char *argv[])
 		{
 			throw 503;
 		}
+
+
 	}
 	catch (int e)
 	{
@@ -237,8 +238,8 @@ void handleError(int error)
 
 void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia)
 {
-	double diffEntreAngulos = 2 * M_PI / cantAngulos;					// deltaTheta
-	double diffEntreRadios = (finalPared - comienzoPared) / cantRadios; // deltaR
+	double diffEntreAngulos = 2.0 * M_PI / cantAngulos;					// deltaTheta
+	double diffEntreRadios = double(finalPared - comienzoPared) / cantRadios; // deltaR
 
 	int ultima_columna = cantAngulos * cantRadios; // La columna de los B
 	// se usa directo sin restarle 1 porque es una columna extra
@@ -321,6 +322,7 @@ void eliminacionGaussiana(vector<vector<double>> &matrizA)
 
 		for (int j = i + 1; j < n * m; j++) // para cada valor por debajo de la diagonal
 		{
+
 			double m_ji = matrizA[j][i] / matrizA[i][i]; // obtengo el coeficiente que lo iguala (no me lo guardo por ahora)
 
 			for (int k = i; k < n * m + 1 - method; k++) // y efectuo la resta de la fila j por la fila i multiplicada por el coeficiente
