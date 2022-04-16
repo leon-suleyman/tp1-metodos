@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
 		auto end = chrono::steady_clock::now();
 		double tiempoDeEjecucion = chrono::duration<double, milli>(end - start).count();
 
-		clog << tiempoDeEjecucion << endl;
+		cerr << tiempoDeEjecucion << endl;
 
 		ofstream outputFile;
 		outputFile.open(outputFileName);
@@ -350,7 +350,7 @@ void cargarInstanciaEn(vector<vector<double>> &matrizA, int inst)
 	{
 		fila = k;
 		matrizA[fila][ultimaColumna] = internalTemperatures[inst][k];
-		fila = (cantAngulos -1) * cantRadios + k;
+		fila = cantAngulos * (cantRadios-1) + k;
 		matrizA[fila][ultimaColumna] = externalTemperatures[inst][k];
 	}
 }
