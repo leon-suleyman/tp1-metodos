@@ -75,8 +75,6 @@ int main(int argc, char *argv[])
 		vector<vector<double>> matrizA(tam_matriz, vector<double>(tam_matriz + 1)); // Agrego una columna extra para los B
 		crearMatrizA(n, m, internalRadius, externalRadius, matrizA, 0);
 
-		printMatriz(matrizA);
-
 		// inicio el reloj para medir la duración del algoritmo
 		auto start = chrono::steady_clock::now();
 		for (int inst = 0; inst < numeroDeInstancias; inst++)
