@@ -91,8 +91,13 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-				resolucionLU(matrizA, inst);
-				guardarResultados(matrizA);
+
+				if (inst == 0){
+					eliminacionGaussiana(matrizA);
+				}
+				vector<vector<double>> copiaA = matrizA;
+				resolucionLU(copiaA, inst);
+				guardarResultados(copiaA);
 				
 				//printMatriz(matrizA);
 			}
@@ -126,7 +131,6 @@ int main(int argc, char *argv[])
 		{
 			throw 503;
 		}
-
 
 	}
 	catch (int e)
@@ -162,7 +166,7 @@ void handleError(int error)
 void crearMatrizA(int cantAngulos, int cantRadios, int comienzoPared, int finalPared, vector<vector<double>> &matrizA, int instancia)
 {
 	double diffEntreAngulos = 2.0 * M_PI / cantAngulos;					// deltaTheta
-	double diffEntreRadios = double(finalPared - comienzoPared) / cantRadios; // deltaR
+	double diffEntreRadios = double(finalPared - comienzoPared) / (cantRadios-1); // deltaR
 
 	int ultima_columna = cantAngulos * cantRadios; // La columna de los B
 	// se usa directo sin restarle 1 porque es una columna extra
@@ -292,10 +296,6 @@ void resolverSistema(vector<vector<double>> &matrizA)
 
 void resolucionLU(vector<vector<double>> &matrizA, int inst)
 {
-	if (inst == 0)
-	{
-		eliminacionGaussiana(matrizA);
-	}
 	resolverLYB(matrizA);
 	resolverUXY(matrizA);
 }
