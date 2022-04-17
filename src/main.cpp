@@ -91,13 +91,9 @@ int main(int argc, char *argv[])
 			}
 			else
 			{
-
-				if (inst == 0){
-					eliminacionGaussiana(matrizA);
-				}
-				vector<vector<double>> copiaA = matrizA;
-				resolucionLU(copiaA, inst);
-				guardarResultados(copiaA);
+				
+				resolucionLU(matrizA, inst);
+				guardarResultados(matrizA);
 				
 				//printMatriz(matrizA);
 			}
@@ -296,6 +292,9 @@ void resolverSistema(vector<vector<double>> &matrizA)
 
 void resolucionLU(vector<vector<double>> &matrizA, int inst)
 {
+	if (inst == 0){
+		eliminacionGaussiana(matrizA);
+	}
 	resolverLYB(matrizA);
 	resolverUXY(matrizA);
 }
@@ -346,6 +345,9 @@ void cargarInstanciaEn(vector<vector<double>> &matrizA, int inst)
 	int cantAngulos = n;
 	int ultimaColumna = m * n;
 	int fila;
+	for (int j = 0; j< ultimaColumna; j++){
+		matrizA[j][ultimaColumna] = 0;
+	}
 	for (int k = 0; k < cantAngulos; k++)
 	{
 		fila = k;
