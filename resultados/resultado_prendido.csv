@@ -30,3 +30,14 @@ instancias/instancia_prendido/prendido_25.in,resultados/instancia_prendido/prend
 instancias/instancia_prendido/prendido_45.in,resultados/instancia_prendido/prendido_45.out,0,14795.5
 instancias/instancia_prendido/prendido_15.in,resultados/instancia_prendido/prendido_15.out,0,5028.8
 instancias/instancia_prendido/prendido_10.in,resultados/instancia_prendido/prendido_10.out,0,3438.88
+entrada,salida,metodo,tiempo
+instancias/instancia_prendido/prendido_40.in,resultados/instancia_prendido/prendido_40_LU.out,1,498.245
+instancias/instancia_prendido/prendido_5.in,resultados/instancia_prendido/prendido_5_LU.out,1,329.73
+instancias/instancia_prendido/prendido_50.in,resultados/instancia_prendido/prendido_50_LU.out,1,390.912
+instancias/instancia_prendido/prendido_30.in,resultados/instancia_prendido/prendido_30_LU.out,1,364.049
+instancias/instancia_prendido/prendido_35.in,resultados/instancia_prendido/prendido_35_LU.out,1,369.956
+instancias/instancia_prendido/prendido_20.in,resultados/instancia_prendido/prendido_20_LU.out,1,361.18
+instancias/instancia_prendido/prendido_25.in,resultados/instancia_prendido/prendido_25_LU.out,1,357.774
+instancias/instancia_prendido/prendido_45.in,resultados/instancia_prendido/prendido_45_LU.out,1,386.579
+instancias/instancia_prendido/prendido_15.in,resultados/instancia_prendido/prendido_15_LU.out,1,341.262
+instancias/instancia_prendido/prendido_10.in,resultados/instancia_prendido/prendido_10_LU.out,1,337.487
