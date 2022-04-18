@@ -36,4 +36,5 @@ build
 .vscode
 cmake-build-debug
 *.in
+graficos
 #*.out
